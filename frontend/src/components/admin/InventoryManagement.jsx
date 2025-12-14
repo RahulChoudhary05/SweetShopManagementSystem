@@ -138,7 +138,7 @@ export const InventoryManagement = () => {
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" />Add Sweet</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-white text-black overflow-visible">
+          <DialogContent className="max-w-2xl bg-white text-black overflow-hidden">
             <DialogHeader>
               <DialogTitle>Create Sweet</DialogTitle>
               <DialogDescription>Add new product</DialogDescription>
@@ -198,7 +198,7 @@ export const InventoryManagement = () => {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-2xl bg-white text-black overflow-visible">
+        <DialogContent className="max-w-2xl bg-white text-black overflow-hidden">
           <DialogHeader>
             <DialogTitle>Edit Sweet</DialogTitle>
             <DialogDescription>Update product</DialogDescription>

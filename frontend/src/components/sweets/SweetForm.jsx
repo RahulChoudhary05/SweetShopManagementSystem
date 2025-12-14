@@ -25,8 +25,6 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
     ingredients: "",
   })
 
-  const [categoryOpen, setCategoryOpen] = useState(false)
-
   useEffect(() => {
     if (initialData) {
       setForm({
@@ -40,11 +38,6 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value })
-
-  const handleCategorySelect = (value) => {
-    setForm({ ...form, category: value })
-    setCategoryOpen(false)
-  }
 
   const submit = (e) => {
     e.preventDefault()
@@ -71,28 +64,20 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
           />
         </div>
 
+        {/* ✅ CATEGORY (NOW WORKS PERFECTLY) */}
         <div>
           <Label>Category</Label>
           <Select
-            open={categoryOpen}
-            onOpenChange={setCategoryOpen}
             value={form.category}
+            onValueChange={(v) => setForm({ ...form, category: v })}
           >
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
 
-            <SelectContent
-              side="bottom"
-              align="start"
-              className="z-[9999] bg-white text-black border shadow-lg"
-            >
+            <SelectContent className="bg-white text-black border shadow-lg">
               {CATEGORIES.filter((c) => c !== "All").map((c) => (
-                <SelectItem
-                  key={c}
-                  value={c}
-                  onSelect={() => handleCategorySelect(c)}
-                >
+                <SelectItem key={c} value={c}>
                   {c}
                 </SelectItem>
               ))}
