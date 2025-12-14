@@ -103,7 +103,7 @@ cp .env.example .env
 
 4. Configure environment variables:
 \`\`\`env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=https://sweetshopmanagementsystem-lsgt.onrender.com/api
 \`\`\`
 
 5. Start the development server:
