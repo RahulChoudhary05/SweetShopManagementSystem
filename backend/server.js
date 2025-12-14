@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 // Enable CORS
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://sweetshopmanagementsystem.vercel.app/",
     credentials: true,
   }),
 )
