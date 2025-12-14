@@ -1,4 +1,5 @@
 "use client"
+
 import { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -24,6 +25,8 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
     ingredients: "",
   })
 
+  const [categoryOpen, setCategoryOpen] = useState(false)
+
   useEffect(() => {
     if (initialData) {
       setForm({
@@ -38,13 +41,20 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value })
 
+  const handleCategorySelect = (value) => {
+    setForm({ ...form, category: value })
+    setCategoryOpen(false)
+  }
+
   const submit = (e) => {
     e.preventDefault()
     onSubmit({
       ...form,
       price: Number(form.price),
       quantity: Number(form.quantity),
-      ingredients: form.ingredients.split(",").map(i => i.trim()),
+      ingredients: form.ingredients
+        ? form.ingredients.split(",").map((i) => i.trim())
+        : [],
     })
   }
 
@@ -53,21 +63,38 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <Label>Sweet Name</Label>
-          <Input name="name" value={form.name} onChange={handleChange} required />
+          <Input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div>
           <Label>Category</Label>
-          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+          <Select
+            open={categoryOpen}
+            onOpenChange={setCategoryOpen}
+            value={form.category}
+          >
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
+
             <SelectContent
-              position="popper"
-              className="z-[9999] bg-white text-black shadow-lg border"
+              side="bottom"
+              align="start"
+              className="z-[9999] bg-white text-black border shadow-lg"
             >
-              {CATEGORIES.filter(c => c !== "All").map(c => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
+              {CATEGORIES.filter((c) => c !== "All").map((c) => (
+                <SelectItem
+                  key={c}
+                  value={c}
+                  onSelect={() => handleCategorySelect(c)}
+                >
+                  {c}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -76,18 +103,46 @@ export const SweetForm = ({ onSubmit, initialData, loading }) => {
 
       <div>
         <Label>Description</Label>
-        <Textarea name="description" value={form.description} onChange={handleChange} required />
+        <Textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          required
+        />
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <Input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} />
-        <Input name="quantity" type="number" placeholder="Quantity" value={form.quantity} onChange={handleChange} />
-        <Input name="weight" placeholder="Weight" value={form.weight} onChange={handleChange} />
+        <Input
+          name="price"
+          type="number"
+          placeholder="Price"
+          value={form.price}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          name="quantity"
+          type="number"
+          placeholder="Quantity"
+          value={form.quantity}
+          onChange={handleChange}
+          required
+        />
+        <Input
+          name="weight"
+          placeholder="Weight"
+          value={form.weight}
+          onChange={handleChange}
+        />
       </div>
 
       <div>
         <Label>Ingredients</Label>
-        <Input name="ingredients" value={form.ingredients} onChange={handleChange} />
+        <Input
+          name="ingredients"
+          value={form.ingredients}
+          onChange={handleChange}
+        />
       </div>
 
       <Button type="submit" className="w-full" disabled={loading}>
