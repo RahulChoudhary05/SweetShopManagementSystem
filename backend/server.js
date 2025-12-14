@@ -4,67 +4,84 @@ const morgan = require("morgan")
 const connectDB = require("./config/database")
 const { errorHandler } = require("./utils/errorHandler")
 const { PORT, NODE_ENV } = require("./config/env")
-const logger = require("./utils/logger")
 
-// Route files
 const authRoutes = require("./routes/auth")
 const sweetRoutes = require("./routes/sweets")
 const inventoryRoutes = require("./routes/inventory")
 
-// Connect to database
 connectDB()
 
 const app = express()
 
-// Body parser
+/* ===========================
+   BODY PARSER
+=========================== */
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Enable CORS
-app.use(
-  cors({
-    origin: "https://sweetshopmanagementsystem.vercel.app/",
-    credentials: true,
-  }),
-)
+/* ===========================
+   🔥 ABSOLUTE CORS FIX
+=========================== */
+const allowedOrigins = [
+  "https://sweetshopmanagementsystem.vercel.app"
+]
 
-// Dev logging middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin)
+  }
+
+  res.setHeader("Access-Control-Allow-Credentials", "true")
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  )
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  )
+
+  // 🔥 HANDLE PREFLIGHT
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200)
+  }
+
+  next()
+})
+
+/* ===========================
+   DEV LOGGING
+=========================== */
 if (NODE_ENV === "development") {
   app.use(morgan("dev"))
 }
 
-// Mount routers
+/* ===========================
+   ROUTES
+=========================== */
 app.use("/api/auth", authRoutes)
 app.use("/api/sweets", sweetRoutes)
 app.use("/api/sweets", inventoryRoutes)
 
-// Health check route
+/* ===========================
+   HEALTH
+=========================== */
 app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Sweet Shop API is running",
-  })
+  res.json({ success: true })
 })
 
-// Error handler
+/* ===========================
+   ERROR HANDLER
+=========================== */
 app.use(errorHandler)
 
-const server = app.listen(PORT, () => {
-  logger.info(`Server running in ${NODE_ENV} mode on port ${PORT}`)
-  console.log(`App is running at ${PORT}`);
+/* ===========================
+   SERVER
+=========================== */
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
 
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err, promise) => {
-  logger.error(`Error: ${err.message}`)
-  server.close(() => process.exit(1))
-})
-
-// Default route
-app.get("/", (req, res) => {
-  return res.json({
-    success: true,
-    message: "Your server is up and running....",
-  });
-});
 module.exports = app
